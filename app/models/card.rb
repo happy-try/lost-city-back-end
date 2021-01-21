@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 class Card
   # 类型
   # - investment: 投资卡（value -> 0）
   # - normal: 普通牌（value -> 1-10）
-  TYPIES = [:investment, :normal]
+  TYPIES = %i[investment normal].freeze
 
   attr_accessor :id, :type, :color, :city, :value
 
@@ -15,6 +17,7 @@ class Card
   end
 
   private
+
   def generate_rand
     SecureRandom.urlsafe_base64(6)
   end
@@ -25,8 +28,8 @@ class Card
 
       cities.each do |city|
         # 三张投资卡
-        3.times.each do |value|
-          cards << new('investment', city[:color], city[:name], value)
+        3.times.each do |_value|
+          cards << new('investment', city[:color], city[:name], 0)
         end
 
         # 9张基本卡

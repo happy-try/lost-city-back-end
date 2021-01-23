@@ -37,7 +37,7 @@ class Card
         end
 
         # 9张基本卡
-        (2..9).each do |value|
+        (2..10).each do |value|
           cards << new('normal', city[:color], city[:name], value)
         end
       end

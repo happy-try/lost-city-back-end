@@ -20,6 +20,16 @@ class GameChannel < ApplicationCable::Channel
     stream_from "room_#{params[:room]}_#{params[:player]}"
   end
 
+  # 计算分数
+  def compute
+    city_status = @game.cities_status
+
+    player = {}
+    city_status.each do |city, status|
+
+    end
+  end
+
   # 加入房间，如果人满，则开始
   def into_room
     control do
@@ -61,7 +71,7 @@ class GameChannel < ApplicationCable::Channel
     control do
       set_instance
 
-      raise Errors::Game if @game.finished
+      raise Errors::GameOver if @game.finished
       @game.check_next_action(@current_player, :push_card)
 
       # 找出当前想要打出的牌
@@ -108,18 +118,27 @@ class GameChannel < ApplicationCable::Channel
 
       @game.save!
 
+      # 这一次的操作
+      @recent_operation = {
+        player: @player,
+        action: :push_card,
+        card: using_card,
+        throw_away: data['throw_away']
+      }
+
       @game.players.each do |one|
-        send_current(one)
+        send_current(one, { recent_operation: @recent_operation })
       end
     end
   end
 
   # 从弃牌堆里 / 剩余的牌堆里 拿一张牌
+  # if_from_city: 是否从棋牌堆里取。true / false,
   def pick_card(data)
     control do
       set_instance
 
-      raise Errors::Game if @game.finished
+      raise Errors::GameOver if @game.finished
       @game.check_next_action(@current_player, :pick_card)
 
       # 从城市堆取回一张
@@ -138,7 +157,7 @@ class GameChannel < ApplicationCable::Channel
           @game.finished = true
           @game.save!
 
-          raise Errors::Game
+          raise Errors::GameOver
         end
 
         @current_player_status[:hand_cards].push(current_card)
@@ -152,8 +171,16 @@ class GameChannel < ApplicationCable::Channel
 
       @game.save!
 
+      # 这一次的操作
+      @recent_operation = {
+        player: @player,
+        action: :pick_card,
+        card: current_card,
+        if_from_city: data['if_from_city']
+      }
+
       @game.players.each do |one|
-        send_current(one)
+        send_current(one, { recent_operation: @recent_operation })
       end
     end
   end

@@ -16,6 +16,10 @@ class Card
     @value = value
   end
 
+  def investment?
+    @type == 'investment'
+  end
+
   private
 
   def generate_rand

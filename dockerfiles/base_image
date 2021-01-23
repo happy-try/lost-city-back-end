@@ -1,0 +1,20 @@
+FROM ruby:2.6.3
+
+RUN apt-get update -qq && apt-get install -y build-essential libpq-dev nodejs cron
+RUN mkdir /lost_city_backend
+
+WORKDIR /lost_city_backend
+
+COPY Gemfile ./Gemfile
+COPY Gemfile.lock ./Gemfile.lock
+
+RUN bundle install
+
+COPY . /lost_city_backend
+
+RUN touch /lost_city_backend/.env && \
+    mkdir -p /lost_city_backend/log && \
+    mkdir -p /lost_city_backend/tmp
+
+# Note: to build image call lost_city_backend_base
+# docker build -f dockerfiles/base_image -t lost_city_backend_base .

@@ -85,8 +85,8 @@ class GameChannel < ApplicationCable::Channel
           city_status[@current_player].push(using_card)
         else
           # 如果是投资卡，上一张卡只能是投资卡
-          if using_card.type == 'investment'
-            if city_last_card.type == 'investment'
+          if using_card.investment?
+            if city_last_card.investment?
               city_status[@current_player].push(using_card)
             else
               raise Errors::Base.new('该投资卡无法下')

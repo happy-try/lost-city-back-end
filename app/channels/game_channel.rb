@@ -30,6 +30,15 @@ class GameChannel < ApplicationCable::Channel
     end
   end
 
+  # 重新开一局，清空原先的数据
+  def new_one
+    control do
+      @game = Game.reset(params['room'])
+
+      @game.players.each { |one| send_current(one) }
+    end
+  end
+
   # 加入房间，如果人满，则开始
   def into_room
     control do
@@ -214,11 +223,14 @@ class GameChannel < ApplicationCable::Channel
       players: @game.players,
       cities: @game.cities,
       cities_status: @game.cities_status,
-      hand_cards: current_player_status[:hand_cards].sort_by { |c| [c.city, c.value] },
+      hand_cards: current_player_status[:hand_cards],
       leave_count: @game.leave_cards.count,
       next_player: @game.next_player,
-      next_action: @game.next_action
+      next_action: @game.next_action,
+      finished: @game.finished
     }.merge(options)
+
+    # .sort_by { |c| [c.city, c.value] }
 
     ActionCable.server.broadcast(
       "room_#{@room}_#{player}",

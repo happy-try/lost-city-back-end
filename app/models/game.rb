@@ -119,9 +119,19 @@ class Game
       end
     end
 
-    def update(room, game)
+    def reset(room)
       room_key = "room:#{room}"
+      old_game = fetch(room)
+
+      game = new(room)
+      game.set_player(old_game.player_ping)
+      game.set_player(old_game.player_pong)
+
+      game.setup
+      game.set_next_action(:player_ping, :push_card)
+
       Rails.cache.write(room_key, game)
+      game
     end
   end
 end

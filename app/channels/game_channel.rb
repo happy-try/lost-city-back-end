@@ -12,7 +12,14 @@ class GameChannel < ApplicationCable::Channel
   end
 
   rescue_from Errors::GameOver do |e|
-    broadcast(type: :game_over)
+    # broadcast(type: :game_over)
+
+    @game.players.each do |player|
+      ActionCable.server.broadcast(
+        "room_#{@room}_#{player}",
+        { type: :game_over }
+      )
+    end
   end
 
   def subscribed

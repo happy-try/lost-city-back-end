@@ -6,7 +6,8 @@ class Game
     { name: '喜马拉雅山', color: '#b74040' },
     { name: '撒哈拉沙漠', color: '#b5aa45' },
     { name: '西伯利亚', color: '#8f76de' },
-    { name: '金字塔', color: '#03a9f4' }
+    { name: '金字塔', color: '#03a9f4' },
+    { name: '盘贝古城', color: '#795548' }
   ].freeze
 
   attr_accessor :room

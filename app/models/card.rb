@@ -42,7 +42,7 @@ class Card
         end
       end
 
-      cards.shuffle
+      cards.shuffle.shuffle
     end
   end
 end

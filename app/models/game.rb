@@ -59,8 +59,8 @@ class Game
     @player_pong = @players[1]
 
     # 每人8张手牌
-    player_ping_in_hands = cards.pop(8)
-    player_pong_in_hands = cards.pop(8)
+    player_ping_in_hands = cards.shift(4) + cards.pop(4)
+    player_pong_in_hands = cards.shift(4) + cards.pop(4)
 
     # 每个城市的当前状态
     @cities_status = {}

@@ -103,19 +103,13 @@ class Game
 
   def save!
     room_key = "room:#{@room}"
-    Rails.cache.write(room_key, self)
-  end
-
-  private
-
-  def generate_rand
-    SecureRandom.urlsafe_base64(6)
+    Rails.cache.write(room_key, self, expires_in: 2.days)
   end
 
   class << self
     def fetch(room)
       room_key = "room:#{room}"
-      Rails.cache.fetch(room_key) do
+      Rails.cache.fetch(room_key, expires_in: 2.days) do
         new(room)
       end
     end
@@ -131,7 +125,7 @@ class Game
       game.setup
       game.set_next_action(:player_ping, :push_card)
 
-      Rails.cache.write(room_key, game)
+      Rails.cache.write(room_key, game, expires_in: 2.days)
       game
     end
   end
